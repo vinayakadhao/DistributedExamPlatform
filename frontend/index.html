@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#101827">
+    <title>ExamFlow | Online Examination Platform</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/app-fixed.js" defer></script>
+    <script src="/static/exam-ui.js" defer></script>
+</head>
+<body>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <section id="authView" class="auth-layout">
+        <div class="auth-brand">
+            <div class="brand-mark">E</div>
+            <div>
+                <span class="eyebrow">DISTRIBUTED EXAMINATION PLATFORM</span>
+                <h1>ExamFlow</h1>
+            </div>
+            <div class="brand-message">
+                <span class="eyebrow">EXAMINATIONS, SIMPLIFIED</span>
+                <h2>A smarter way to<br>learn and assess.</h2>
+                <p>Secure exams, saved answers, timed assessments, and automatic evaluation in one platform.</p>
+                <div class="feature-line"><span class="feature-dot"></span> Timed online examinations</div>
+                <div class="feature-line"><span class="feature-dot"></span> Automatic answer evaluation</div>
+                <div class="feature-line"><span class="feature-dot"></span> Separate teacher and student portals</div>
+            </div>
+            <p class="brand-footer">Distributed Systems Mini Project<br>By Vinayak Adhao (123B1B071) and Soham Kolte (123B1B291)</p>
+        </div>
+
+        <div class="auth-panel">
+            <div class="auth-card">
+                <div class="mobile-brand">
+                    <div class="brand-mark">E</div>
+                    <strong>ExamFlow</strong>
+                </div>
+                <span class="eyebrow">WELCOME TO EXAMFLOW</span>
+                <h2 id="authTitle">Sign in to your account</h2>
+                <p id="authDescription" class="muted">Enter your credentials to continue.</p>
+
+                <form id="authForm">
+                    <div id="nameGroup" class="field hidden">
+                        <label for="authName">Full name</label>
+                        <input id="authName" type="text" autocomplete="name" placeholder="Your full name">
+                    </div>
+
+                    <div class="field">
+                        <label for="authEmail">Email address</label>
+                        <input id="authEmail" type="email" autocomplete="email"
+                               placeholder="you@example.com" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="authPassword">Password</label>
+                        <input id="authPassword" type="password"
+                               autocomplete="current-password" minlength="8"
+                               placeholder="At least 8 characters" required>
+                    </div>
+
+                    <div id="roleGroup" class="field hidden">
+                        <label for="authRole">Register as</label>
+                        <select id="authRole">
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                        </select>
+                        <p class="field-note">Prototype role selection. Teacher registration must be restricted before production use.</p>
+                    </div>
+
+                    <button id="authSubmit" type="submit" class="button primary full">
+                        Sign in <span aria-hidden="true">-></span>
+                    </button>
+                </form>
+
+                <p class="auth-switch">
+                    <span id="authSwitchText">Don't have an account</span>
+                    <button id="authSwitch" type="button" class="text-button">Create account</button>
+                </p>
+            </div>
+            <p class="security-note">Use a test account for this development environment.</p>
+            <p class="project-credit">Distributed Systems Mini Project - Vinayak Adhao (123B1B071) and Soham Kolte (123B1B291)</p>
+        </div>
+    </section>
+
+    <section id="appView" class="app-layout hidden">
+        <aside class="sidebar">
+            <a href="#" class="sidebar-brand" aria-label="ExamFlow home">
+                <span class="brand-mark small">E</span>
+                <span>ExamFlow</span>
+            </a>
+
+            <div class="sidebar-label">WORKSPACE</div>
+            <nav id="mainNav" class="main-nav">
+                <button class="nav-item active" data-view="overview">
+                    <span class="nav-icon"></span> Overview
+                </button>
+                <button class="nav-item" data-view="exams">
+                    <span class="nav-icon"></span> Exams
+                </button>
+                <button class="nav-item" data-view="results">
+                    <span class="nav-icon"></span> Results
+                </button>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="system-status">
+                    <span class="status-dot"></span>
+                    <div><strong>Platform workspace</strong><small>Signed-in session</small></div>
+                </div>
+                <button id="logoutButton" class="nav-item logout-button">
+                    <span class="nav-icon"><</span> Sign out
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div>
+                    <div class="breadcrumb">Workspace / <span id="breadcrumbCurrent">Overview</span></div>
+                    <h1 id="pageTitle">Overview</h1>
+                </div>
+                <div class="profile">
+                    <div id="profileAvatar" class="avatar">U</div>
+                    <div class="profile-details">
+                        <strong id="profileEmail">User</strong>
+                        <span id="profileRole">Student</span>
+                    </div>
+                </div>
+            </header>
+
+            <section id="overviewPanel" class="view-panel">
+                <div class="welcome-banner">
+                    <div>
+                        <span class="eyebrow">YOUR WORKSPACE</span>
+                        <h2 id="welcomeTitle">Welcome back</h2>
+                        <p id="welcomeText">Your examinations and activity at a glance.</p>
+                    </div>
+                    <div class="welcome-art" aria-hidden="true">
+                        <div class="art-paper"><span></span><span></span><span></span><span></span></div>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <article class="stat-card">
+                        <div class="stat-top"><span>Exams available</span><span class="stat-icon blue"></span></div>
+                        <strong id="statExams">-</strong>
+                        <p>Exams in your workspace</p>
+                    </article>
+                    <article class="stat-card">
+                        <div class="stat-top"><span id="statSecondLabel">Your role</span><span class="stat-icon purple"></span></div>
+                        <strong id="statSecond">-</strong>
+                        <p id="statSecondFoot">Workspace access</p>
+                    </article>
+                    <article class="stat-card">
+                        <div class="stat-top"><span>Platform</span><span class="stat-icon green"></span></div>
+                        <strong>Online</strong>
+                        <p>Connected application interface</p>
+                    </article>
+                </div>
+
+                <div class="section-heading">
+                    <div><h2>Get started</h2><p>Choose what you want to work on.</p></div>
+                </div>
+
+                <div class="action-grid">
+                    <button class="action-card" data-view="exams">
+                        <span class="action-symbol blue"></span>
+                        <strong id="actionPrimaryTitle">Explore exams</strong>
+                        <span id="actionPrimaryText">View examinations in your workspace.</span>
+                        <span class="action-arrow">Open workspace -></span>
+                    </button>
+                    <button id="secondaryAction" class="action-card" data-view="results">
+                        <span class="action-symbol purple"></span>
+                        <strong id="actionSecondaryTitle">View results</strong>
+                        <span id="actionSecondaryText">Check your examination activity.</span>
+                        <span class="action-arrow">View activity -></span>
+                    </button>
+                </div>
+
+                <div id="overviewNotice" class="notice hidden"></div>
+            </section>
+
+            <section id="examsPanel" class="view-panel hidden">
+                <div class="section-heading">
+                    <div>
+                        <h2 id="examsHeading">Examinations</h2>
+                        <p id="examsDescription">View and manage examinations.</p>
+                    </div>
+                    <button id="refreshExams" class="button secondary">Refresh</button>
+                </div>
+
+                <section id="createExamCard" class="content-card hidden">
+                    <div class="card-heading">
+                        <div><h3>Create an examination</h3><p>Configure the schedule, duration and scoring.</p></div>
+                        <span class="card-tag">TEACHER</span>
+                    </div>
+
+                    <form id="createExamForm" class="form-grid">
+                        <div class="field field-wide">
+                            <label for="examTitle">Exam title</label>
+                            <input id="examTitle" required minlength="3" maxlength="200"
+                                   placeholder="e.g. Distributed Systems Test">
+                        </div>
+                        <div class="field field-wide">
+                            <label for="examDescription">Description</label>
+                            <textarea id="examDescription" rows="2" maxlength="5000"
+                                      placeholder="Topics, instructions and other details"></textarea>
+                        </div>
+                        <div class="field">
+                            <label for="examDuration">Duration (minutes)</label>
+                            <input id="examDuration" type="number" min="1" max="600" value="60" required>
+                        </div>
+                        <div class="field">
+                            <label for="examTotalMarks">Total marks</label>
+                            <input id="examTotalMarks" type="number" min="0.01" step="0.01"
+                                   value="100" required>
+                        </div>
+                        <div class="field">
+                            <label for="examPenalty">Deduction per wrong answer</label>
+                            <input id="examPenalty" type="number" min="0" max="100"
+                                   step="0.01" value="0">
+                        </div>
+                        <div class="field">
+                            <label for="examStarts">Starts at</label>
+                            <input id="examStarts" type="datetime-local" required>
+                        </div>
+                        <div class="field field-wide">
+                            <label for="examEnds">Ends at</label>
+                            <input id="examEnds" type="datetime-local" required>
+                        </div>
+                        <div class="form-actions field-wide">
+                            <button type="submit" class="button primary">Create exam -></button>
+                        </div>
+                    </form>
+                </section>
+
+                <section id="createQuestionCard" class="content-card hidden">
+                    <div class="card-heading">
+                        <div><h3>Add a question</h3><p>Create a multiple-choice question for an exam.</p></div>
+                        <span class="card-tag">TEACHER</span>
+                    </div>
+                    <form id="createQuestionForm" class="form-grid">
+                        <div class="field field-wide">
+                            <label for="questionExam">Examination</label>
+                            <select id="questionExam" required>
+                                <option value="">Select an examination</option>
+                            </select>
+                        </div>
+                        <div class="field field-wide">
+                            <label for="questionText">Question</label>
+                            <textarea id="questionText" rows="3" required
+                                      placeholder="Write your question here"></textarea>
+                        </div>
+                        <div class="field">
+                            <label for="optionA">Option A</label>
+                            <input id="optionA" required>
+                        </div>
+                        <div class="field">
+                            <label for="optionB">Option B</label>
+                            <input id="optionB" required>
+                        </div>
+                        <div class="field">
+                            <label for="optionC">Option C</label>
+                            <input id="optionC" required>
+                        </div>
+                        <div class="field">
+                            <label for="optionD">Option D</label>
+                            <input id="optionD" required>
+                        </div>
+                        <div class="field">
+                            <label for="correctOption">Correct option</label>
+                            <select id="correctOption" required>
+                                <option value="A">Option A</option>
+                                <option value="B">Option B</option>
+                                <option value="C">Option C</option>
+                                <option value="D">Option D</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="questionMarks">Marks</label>
+                            <input id="questionMarks" type="number" min="0.01"
+                                   step="0.01" value="2" required>
+                        </div>
+                        <div class="field field-wide">
+                            <label for="questionExplanation">Explanation (optional)</label>
+                            <textarea id="questionExplanation" rows="2"
+                                      placeholder="Explain the correct answer"></textarea>
+                        </div>
+                        <div class="form-actions field-wide">
+                            <button type="submit" class="button primary">Save question -></button>
+                        </div>
+                    </form>
+                </section>
+
+                <div id="examList" class="exam-grid"></div>
+                <div id="examEmpty" class="empty-state hidden">
+                    <div class="empty-icon">E</div>
+                    <h3>No examinations to show</h3>
+                    <p>Examinations will appear here when they are available.</p>
+                </div>
+
+                <section id="attemptPanel" class="content-card hidden">
+                    <div class="attempt-top">
+                        <div><span class="eyebrow">EXAM IN PROGRESS</span><h2 id="attemptTitle">Examination</h2></div>
+                        <div class="timer-box"><span>TIME REMAINING</span><strong id="attemptTimer">--:--</strong></div>
+                    </div>
+                    <p id="attemptDescription" class="muted"></p>
+                    <div id="questionList" class="question-list"></div>
+                    <div class="attempt-footer">
+                        <span id="answerProgress">0 questions answered</span>
+                        <button id="submitAttempt" type="button" class="button primary">Submit examination -></button>
+                    </div>
+                </section>
+
+                <section id="resultPanel" class="content-card hidden">
+                    <span class="eyebrow">SUBMISSION RESULT</span>
+                    <h2 id="resultTitle">Your examination has been submitted</h2>
+                    <p id="resultMessage" class="muted">Waiting for automatic evaluation.</p>
+                    <div id="scoreBox" class="score-box hidden">
+                        <span>Final score</span>
+                        <strong id="finalScore">-</strong>
+                    </div>
+                    <button type="button" class="button secondary" data-view="exams">Back to examinations</button>
+                </section>
+            </section>
+
+            <section id="resultsPanel" class="view-panel hidden">
+                <div class="section-heading">
+                    <div><h2 id="resultsHeading">Results and activity</h2><p id="resultsDescription">Your examination activity.</p></div>
+                    <button id="refreshResults" class="button secondary">Refresh</button>
+                </div>
+                <div id="resultsList" class="results-list"></div>
+                <div id="resultsEmpty" class="empty-state hidden">
+                    <div class="empty-icon">R</div>
+                    <h3>No results yet</h3>
+                    <p>Your submitted examinations will appear here.</p>
+                </div>
+            </section>
+
+            <footer class="main-footer">
+                <span>ExamFlow <span class="footer-separator">-</span> Distributed Examination Platform</span>
+                <span>Mini project by Vinayak Adhao (123B1B071) and Soham Kolte (123B1B291)</span>
+            </footer>
+        </main>
+    </section>
+</body>
+</html>
+
+
+

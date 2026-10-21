@@ -1,0 +1,127 @@
+﻿services:
+  gateway:
+    build:
+      context: .
+      dockerfile: services/gateway/Dockerfile
+    container_name: exam-gateway
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  auth_service:
+    build: ./services/auth_service
+    container_name: exam-auth
+    environment:
+      DATABASE_URL: postgresql://exam_user:${POSTGRES_PASSWORD}@postgres:5432/exam_platform
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+    ports:
+      - "127.0.0.1:8001:8001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  exam_service:
+    build: ./services/exam_service
+    container_name: exam-exam
+    environment:
+      DATABASE_URL: postgresql://exam_user:${POSTGRES_PASSWORD}@postgres:5432/exam_platform
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+    ports:
+      - "127.0.0.1:8002:8002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  question_service:
+    build: ./services/question_service
+    container_name: exam-question
+    environment:
+      DATABASE_URL: postgresql://exam_user:${POSTGRES_PASSWORD}@postgres:5432/exam_platform
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+    ports:
+      - "127.0.0.1:8003:8003"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  attempt_service:
+    build: ./services/attempt_service
+    container_name: exam-attempt
+    environment:
+      DATABASE_URL: postgresql://exam_user:${POSTGRES_PASSWORD}@postgres:5432/exam_platform
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: exam_user
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:?Set RABBITMQ_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:8004:8004"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  evaluation_worker:
+    build: ./services/evaluation_worker
+    container_name: exam-evaluation-worker
+    environment:
+      DATABASE_URL: postgresql://exam_user:${POSTGRES_PASSWORD}@postgres:5432/exam_platform
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: exam_user
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:?Set RABBITMQ_PASSWORD in .env}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+  postgres:
+    image: postgres:17-alpine
+    container_name: exam-postgres
+    environment:
+      POSTGRES_DB: exam_platform
+      POSTGRES_USER: exam_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U exam_user -d exam_platform"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    container_name: exam-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: exam_user
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?Set RABBITMQ_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:5672:5672"
+      - "127.0.0.1:15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
+
+
